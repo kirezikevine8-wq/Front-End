@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register | Milk Delivery System</title>
+    <link rel="stylesheet" href="register.css">
+</head>
+<body>
+
+<div class="register-container">
+    <h2>Create Account</h2>
+
+    <form action="register.php" method="POST">
+        <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" name="fullname" placeholder="Enter full name" required>
+        </div>
+
+        <div class="input-group">
+            <label>Email or Username</label>
+            <input type="email or username" name="email" placeholder="Enter email or username" required>
+        </div>
+
+        <div class="input-group">
+            <label>Phone Number</label>
+            <input type="text" name="phone" placeholder="Enter phone number" required>
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Create password" required>
+        </div>
+
+        <div class="input-group">
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_password" placeholder="Confirm password" required>
+        </div>
+
+        <div class="input-group">
+            <label>Register As</label>
+            <select name="role" required>
+                <option value="">-- Select Role --</option>
+                <option value="user">User</option>
+                <!-- Admin accounts should be created by system admin -->
+            </select>
+            <button type="submit" class="register-btn">Register</button>
