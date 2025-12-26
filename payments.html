@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payments</title>
+    <link rel="stylesheet" href="payments.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2 class="logo">ADMIN PANEL</h2>
+        <ul class="menu">
+            <li>Dashboard</li>
+            <li>Farmers</li>
+            <li>Collections</li>
+            <li class="active">Payments</li>
+            <li>Collection Centers</li>
+            <li>Reports</li>
+            <li>Settings</li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+
+        <!-- Header -->
+        <div class="page-header">
+            <div>
+                <h1>Payments</h1>
+                <p>Milk payment calculations and records</p>
+            </div>
+
+            <button class="btn primary">+ Generate Payment</button>
+        </div>
+
+        <!-- Search -->
+        <div class="search-box">
+            <input type="text" placeholder="Search farmer or ID...">
+        </div>
+
+        <!-- Payments Table -->
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Farmer</th>
+                        <th>Farmer ID</th>
+                        <th>Total Liters</th>
+                        <th>Price / Liter (RWF)</th>
+                        <th>Total Amount (RWF)</th>
+                        <th>Interval</th>
+                        <th>Period Start</th>
+                        <th>Period End</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Kalisa Medard</td>
+                        <td>F0002</td>
+                        <td>200 L</td>
+                        <td>300</td>
+                        <td><strong>60,000</strong></td>
+                        <td>Monthly</td>
+                        <td>25 November 2025</td>
+                        <td>25 December 2025</td>
+                    </tr>
+
+                    <tr>
+                        <td>Kirezi Kevine</td>
+                        <td>F0003</td>
+                        <td>150 L</td>
+                        <td>300</td>
+                        <td><strong>45,000</strong></td>
+                        <td>Weekly</td>
+                        <td>18 December 2025</td>
+                        <td>25 December 2025</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>
