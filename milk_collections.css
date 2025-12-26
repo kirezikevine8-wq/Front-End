@@ -165,3 +165,14 @@ textarea {
     background: #e3f2fd;
     color: #1976d2;
 }
+a {
+    text-decoration: none;
+}
+/* Reset all link colors */
+a,
+a:visited,
+a:hover,
+a:active {
+    color: #333;
+    text-decoration: none;
+}

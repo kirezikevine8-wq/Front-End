@@ -125,3 +125,14 @@ tbody tr {
 tbody tr:hover {
     background: #f9f9f9;
 }
+a {
+    text-decoration: none;
+}
+/* Reset all link colors */
+a,
+a:visited,
+a:hover,
+a:active {
+    color: #333;
+    text-decoration: none;
+}

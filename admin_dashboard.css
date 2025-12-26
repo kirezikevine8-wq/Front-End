@@ -100,8 +100,17 @@ body {
 .warning h2 {
     color: #f44336;
 }
+a {
+    text-decoration: none;
+}
 
 .revenue h2 {
     color: #ff9800;
 }
-
+a,
+a:visited,
+a:hover,
+a:active {
+    color: #333;
+    text-decoration: none;
+}
