@@ -2,39 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Register | Milk Delivery System</title>
-    <link rel="stylesheet" href="register.css">
+    <title>User Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+        .container {
+            width: 400px;
+            margin: 80px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+        }
+        button {
+            background: #0d6efd;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        .success {
+            background: #e6fffa;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
 </head>
 <body>
 
-<div class="register-container">
-    <h2>Create Account</h2>
+<div class="container">
+    <h2>User Registration</h2>
 
-    <form action="register.php" method="POST">
-        <div class="input-group">
-            <label>Full Name</label>
-            <input type="text" name="fullname" placeholder="Enter full name" required>
-        </div>
+    <form id="registerForm">
+        <input id="fullname" placeholder="Full Name" required>
+        <input id="phone" placeholder="Phone Number" required>
+        <input id="username" placeholder="Username" required>
+        <input id="password" type="password" placeholder="Password" required>
+        <input id="passwordConfirmation" type="password" placeholder="Confirm Password" required>
 
-        <div class="input-group">
-            <label>Email or Username</label>
-            <input type="email or username" name="email" placeholder="Enter email or username" required>
-        </div>
+        <button type="submit">Register</button>
+    </form>
 
-        <div class="input-group">
-            <label>Phone Number</label>
-            <input type="text" name="phone" placeholder="Enter phone number" required>
-        </div>
+    <div id="formMessage" class="message"></div>
+</div>
 
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Create password" required>
-        </div>
-
-        <div class="input-group">
-            <label>Confirm Password</label>
-            <input type="password" name="confirm_password" placeholder="Confirm password" required>
-        </div>
-
-     
-            <button type="submit" class="register-btn">Register</button>
+<script src="register.js" defer></script>
+</body>
+</html>
