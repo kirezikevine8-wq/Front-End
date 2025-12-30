@@ -1,86 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Collection Centers</title>
-    <link rel="stylesheet" href="collection_centers.css">
+<meta charset="UTF-8">
+<title>Admin Panel - Collection Centers</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+  }
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: white;
+    color: black;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar h2 {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #34495e;
+    font-size: 20px;
+    margin: 0;
+  }
+  .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+  }
+  .menu li {
+    padding: 15px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #34495e;
+  }
+  .menu li:hover, .menu li.active {
+    background: #1abc9c;
+  }
+  /* Main content */
+  .main {
+    flex: 1;
+    padding: 20px;
+  }
+  .main h2 {
+    margin-top: 0;
+  }
+  button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 15px;
+    border-radius: 5px;
+  }
+  button:hover { background-color: #45a049; }
+  form {
+    display: none;
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  form input {
+    margin-bottom: 10px;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+  }
+  th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  th { background-color: #f2f2f2; }
+  tr:hover { background-color: #f9f9f9; }
+  .loading { margin-top: 20px; font-weight: bold; color: #555; }
+  .error { color: red; margin-top: 20px; font-weight: bold; }
+  .search-bar {
+    margin-bottom: 15px;
+  }
+  .search-bar input {
+    padding: 8px;
+    width: 250px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  a {
+    text-decoration: none;
+}
+/* Reset all link colors */
+a,
+a:visited,
+a:hover,
+a:active {
+    color: #333;
+    text-decoration: none;
+}
+
+</style>
 </head>
 <body>
 
 <div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>ADMIN PANEL</h2>
+    <ul class="menu">
+     <li><a href="admin_dashboard.html">Dashboard</li>
+      <li><a href="milk_collections.html">Collections</a></li>
+     <li><a href="payments.html">Payments</a></li>
+      <li class="active">Collection Centers</li>
+    </ul>
+  </aside>
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <h2 class="logo">ADMIN PANEL</h2>
-        <ul class="menu">
-            <li><a href="admin_dashboard.html">Dashboard</li>
-            <li><a href="Farmers.html">Farmers</li>
-            <li><a href="milk_collections.html">Collections</a></li>
-           <li><a href="payments.html">Payments</a></li>
-            <li class="active">Collection Centers</li>
-            <li>Reports</li>
-            <li>Settings</li>
-        </ul>
-    </aside>
+  <!-- Main content -->
+  <div class="main">
+    <h2>Collection Centers</h2>
+    <button id="addCenterBtn">+ Add Center</button>
 
-    <!-- Main Content -->
-    <main class="main">
+    <form id="addCenterForm">
+      <input type="text" id="name" placeholder="Name" required>
+      <input type="text" id="code" placeholder="Code" required>
+      <input type="text" id="manager" placeholder="Manager" required>
+      <input type="text" id="phone" placeholder="Phone" required>
+      <input type="number" id="price" placeholder="Price" required>
+      <input type="text" id="location" placeholder="Location" required>
+      <button type="button" id="saveCenterBtn">Save Center</button>
+    </form>
 
-        <!-- Header -->
-        <div class="page-header">
-            <div>
-                <h1>Collection Centers</h1>
-                <p>Manage milk collection centers</p>
-            </div>
+   
 
-            <button class="btn primary">+ Add Center</button>
-        </div>
+    <div id="status" class="loading">Loading collection centers...</div>
 
-        <!-- Search -->
-        <div class="search-box">
-            <input type="text" placeholder="Search collection centers...">
-        </div>
-
-        <!-- Table -->
-        <div class="table-card">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Code</th>
-                        <th>Location</th>
-                        <th>Manager</th>
-                        <th>Phone</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Main Collection Center</td>
-                        <td>MCC001</td>
-                        <td>Kigali Downtown</td>
-                        <td>Izere Bruno</td>
-                        <td>+250788430786</td>
-                    </tr>
-                    <tr>
-                        <td>Eastern Collection Center</td>
-                        <td>ECC001</td>
-                        <td>Nyagatare</td>
-                        <td>Nkotanyi Fred</td>
-                        <td>+250780682770</td>
-                    </tr>
-                    <tr>
-                        <td>Southern Collection Center</td>
-                        <td>SCC001</td>
-                        <td>Huye</td>
-                        <td>Uwase Lyse</td>
-                        <td>+250789666492</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-    </main>
+    <table id="centersTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Code</th>
+          <th>Manager</th>
+          <th>Phone</th>
+          <th>Price (RWF)</th>
+          <th>Location</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </div>
+
+<script>
+const apiUrl = 'https://milk-api-l8fd.onrender.com/api/collection-centers';
+
+const addBtn = document.getElementById('addCenterBtn');
+const form = document.getElementById('addCenterForm');
+const saveBtn = document.getElementById('saveCenterBtn');
+const table = document.getElementById('centersTable');
+const tbody = table.querySelector('tbody');
+const statusDiv = document.getElementById('status');
+const searchInput = document.getElementById('searchInput');
+
+// Toggle Add Center form
+addBtn.addEventListener('click', () => {
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+});
+
+// Fetch collection centers from API
+fetch(apiUrl, { method: 'GET', headers: { 'Accept': '*/*' } })
+  .then(response => {
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.json();
+  })
+  .then(data => {
+    const centers = data.centers || [];
+    if (centers.length === 0) {
+      statusDiv.textContent = 'No collection centers found.';
+      return;
+    }
+    centers.forEach(center => addRow(center));
+    statusDiv.style.display = 'none';
+    table.style.display = 'table';
+  })
+  .catch(error => {
+    statusDiv.textContent = 'Error loading collection centers: ' + error.message;
+    statusDiv.className = 'error';
+  });
+
+// Save new center locally (demo)
+saveBtn.addEventListener('click', () => {
+  const payload = {
+    name: document.getElementById('name').value.trim(),
+    code: document.getElementById('code').value.trim(),
+    manager: document.getElementById('manager').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    price: Number(document.getElementById('price').value),
+    location: document.getElementById('location').value.trim()
+  };
+
+  // Validation
+  if (!payload.name || !payload.code || !payload.manager ||
+      !payload.phone || !payload.price || !payload.location) {
+    alert('Please fill all fields');
+    return;
+  }
+
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': '*/*'
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Failed to save center');
+    return res.json();
+  })
+  .then(data => {
+    if (data.status === 'success') {
+      addRow(data.center); // show saved center from backend
+      form.reset();
+      form.style.display = 'none';
+      alert('Collection center added successfully');
+    } else {
+      alert('Failed to add center');
+    }
+  })
+  .catch(err => {
+    alert('Error: ' + err.message);
+  });
+
+
+  addRow(center);
+  form.reset();
+  form.style.display = 'none';
+});
+
+// Function to add row to table
+function addRow(center) {
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td>${center.id}</td>
+    <td>${center.name}</td>
+    <td>${center.code}</td>
+    <td>${center.manager}</td>
+    <td>${center.phone}</td>
+    <td>${center.price}</td>
+    <td>${center.location}</td>
+    <td>${new Date(center.created_at).toLocaleString()}</td>
+  `;
+  tbody.appendChild(row);
+}
+
+// Search functionality
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase();
+  [...tbody.rows].forEach(row => {
+    const name = row.cells[1].textContent.toLowerCase();
+    const code = row.cells[2].textContent.toLowerCase();
+    row.style.display = name.includes(query) || code.includes(query) ? '' : 'none';
+  });
+});
+</script>
 
 </body>
 </html>

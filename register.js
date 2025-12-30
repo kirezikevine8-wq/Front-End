@@ -2,7 +2,15 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     e.preventDefault();
 
     const messageBox = document.getElementById("formMessage");
+    const btnText = document.getElementById("btnText");
+    const btnLoader = document.getElementById("btnLoader");
+    const registerBtn = document.getElementById("registerBtn");
+
+    // START loading
     messageBox.style.display = "none";
+    btnText.style.display = "none";
+    btnLoader.style.display = "inline";
+    registerBtn.disabled = true;
 
     const payload = {
         fullname: document.getElementById("fullname").value,
@@ -12,9 +20,10 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         passwordConfirmation: document.getElementById("passwordConfirmation").value
     };
 
-    // Frontend check
+    // Frontend validation
     if (payload.password !== payload.passwordConfirmation) {
         showMessage("Passwords do not match", "error");
+        stopLoading();
         return;
     }
 
@@ -42,9 +51,17 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         console.error(error);
     }
 
+    stopLoading();
+
     function showMessage(message, type) {
         messageBox.innerText = message;
         messageBox.className = `message ${type}`;
         messageBox.style.display = "block";
+    }
+
+    function stopLoading() {
+        btnText.style.display = "inline";
+        btnLoader.style.display = "none";
+        registerBtn.disabled = false;
     }
 });

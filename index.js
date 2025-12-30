@@ -1,7 +1,15 @@
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
+     const btnText = document.getElementById("btnText");
+    const btnLoader = document.getElementById("btnLoader");
+    const loginBtn = document.getElementById("loginBtn");
     const messageBox = document.getElementById("formMessage");
+
+    // Start loading
+ btnText.style.display = "none";
+    btnLoader.style.display = "inline";
+    loginBtn.disabled = true;
     messageBox.style.display = "none";
 
     const payload = {
@@ -26,16 +34,15 @@ document.getElementById("loginForm").addEventListener("submit", async function (
             data = JSON.parse(raw);
         } catch {
             showMessage("Invalid server response", "error");
+            stopLoading();
             return;
         }
 
         if (response.ok && data.status === "success") {
             showMessage(data.message, "success");
 
-            // Save user info
             localStorage.setItem("user", JSON.stringify(data.user));
 
-            // Redirect based on role
             setTimeout(() => {
                 if (data.user.role === "admin") {
                     window.location.href = "admin_dashboard.html";
@@ -43,13 +50,14 @@ document.getElementById("loginForm").addEventListener("submit", async function (
                     window.location.href = "user_dashboard.html";
                 }
             }, 1200);
-
         } else {
             showMessage(data.message || "Login failed", "error");
+            stopLoading();
         }
 
     } catch (error) {
         showMessage("Server error. Please try again.", "error");
+        stopLoading();
         console.error(error);
     }
 
@@ -58,4 +66,10 @@ document.getElementById("loginForm").addEventListener("submit", async function (
         messageBox.className = `message ${type}`;
         messageBox.style.display = "block";
     }
+
+    function stopLoading() {
+          btnText.style.display = "inline";
+        btnLoader.style.display = "none";
+        loginBtn.disabled = false;
+    }  200;
 });

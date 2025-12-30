@@ -14,12 +14,10 @@
         <h2 class="logo">ADMIN PANEL</h2>
         <ul class="menu">
              <li><a href="admin_dashboard.html">Dashboard</li>
-            <li><a href="Farmers.html">Farmers</li>
             <li class="active">Collections</li>
             <li><a href="payments.html">Payments</a></li>
             <li><a href="collection_centers.html">Collection Centers</a></li>
-            <li>Reports</li>
-            <li>Settings</li>
+            
         </ul>
     </aside>
 
@@ -32,7 +30,7 @@
                 <h1>Milk Collection</h1>
                 <p>Record and manage all milk collections</p>
             </div>
-            <input type="text" class="search" placeholder="Search collections...">
+           
         </div>
 
         <div class="content">
@@ -42,6 +40,15 @@
                 <h3>Record New Delivery</h3>
 
                 <form>
+                             <div class="form-group">
+                        <label>Select Collection Centers</label>
+                        <select>
+                            <option>Choose a collecton center</option>
+                            <option>Main Collection Center</option>
+                            <option>Eastern Collection Center</option>
+                            <option>Southern Collection Center</option>
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label>Select Farmer</label>
                         <select>

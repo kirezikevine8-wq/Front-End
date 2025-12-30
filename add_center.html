@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Collection Center</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 30px; }
+        .form-container { background: #fff; padding: 20px; border-radius: 8px; max-width: 400px; margin: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 4px; border: 1px solid #ccc; }
+        button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        .message { margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Add New Collection Center</h2>
+    <form id="centerForm">
+        <input type="text" id="name" placeholder="Center Name" required>
+        <input type="text" id="code" placeholder="Center Code" required>
+        <input type="text" id="manager" placeholder="Manager Name" required>
+        <input type="text" id="phone" placeholder="Phone Number" required>
+        <input type="number" id="price" placeholder="Price per Liter" required>
+        <input type="text" id="location" placeholder="Location" required>
+        <button type="submit">Add Center</button>
+    </form>
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+document.getElementById('centerForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent form from refreshing the page
+
+    // Get values from the form
+    const centerData = {
+        name: document.getElementById('name').value,
+        code: document.getElementById('code').value,
+        manager: document.getElementById('manager').value,
+        phone: document.getElementById('phone').value,
+        price: parseFloat(document.getElementById('price').value),
+        location: document.getElementById('location').value
+    };
+
+    // Send POST request to the API
+    fetch('https://milk-api-l8fd.onrender.com/api/collection-center', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(centerData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageDiv = document.getElementById('message');
+        if(data.status === "success"){
+            messageDiv.style.color = "green";
+            messageDiv.textContent = data.message;
+            document.getElementById('centerForm').reset(); // Clear form
+        } else {
+            messageDiv.style.color = "red";
+            messageDiv.textContent = data.message || "Failed to add center.";
+        }
+    })
+    .catch(error => {
+        const messageDiv = document.getElementById('message');
+        messageDiv.style.color = "red";
+        messageDiv.textContent = "Error: " + error;
+        console.error('Error:', error);
+    });
+});
+</script>
+
+</body>
+</html>
