@@ -1,89 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Payments</title>
-    <link rel="stylesheet" href="payments.css">
+<meta charset="UTF-8">
+<title>Generate Payment</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f6f8fb; margin:0; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar { width: 230px; background: #fff; padding: 20px; }
+.sidebar .logo { text-align:center; color: #2e7d32; margin-bottom:30px; }
+.sidebar .menu { list-style:none; padding:0; }
+.sidebar .menu li { margin-bottom:10px; }
+.sidebar .menu a { text-decoration:none; color:#333; display:block; padding:10px; }
+.main { flex:1; padding:30px; }
+.card { max-width:700px; background:#fff; padding:25px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
+label { display:block; margin-top:15px; font-weight:bold; color:#555; }
+input, select { width:100%; padding:10px; margin-top:6px; border-radius:5px; border:1px solid #ccc; }
+input[readonly] { background:#f1f1f1; }
+.btn { margin-top:25px; padding:12px; width:100%; background:green; color:white; border:none; border-radius:6px; font-size:15px; cursor:pointer; }
+.btn:hover { background:darkgreen; }
+.custom-dropdown { position: absolute; background: #fff; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; width: calc(100% - 2px); display: none; z-index: 999; }
+.custom-dropdown .custom-option { padding: 10px; cursor: pointer; }
+.custom-dropdown .custom-option:hover { background: #f0f0f0; }
+.toast { padding:12px; margin-top:10px; border-radius:6px; color:white; display:none; }
+.toast.success { background: #2e7d32; }
+.toast.error { background: #e53935; }
+</style>
 </head>
 <body>
 
 <div class="layout">
-
-    <!-- Sidebar -->
     <aside class="sidebar">
         <h2 class="logo">ADMIN PANEL</h2>
         <ul class="menu">
-             <li><a href="admin_dashboard.html">Dashboard</li>
-             <li><a href="Farmers.html">Farmers</li>
-            <li><a href="milk_collections.html">Collections</a></li>
-            <li class="active">Payments</li>
+            <li><a href="admin_dashboard.html">Dashboard</a></li>
+            <li><a href="milk_collection.html">Collections</a></li>
+            <li class="active"><a href="payments.html">Payments</a></li>
             <li><a href="collection_centers.html">Collection Centers</a></li>
-            <li>Reports</li>
-            <li>Settings</li>
         </ul>
     </aside>
 
-    <!-- Main Content -->
     <main class="main">
+        <h1>Generate Farmer Payment</h1>
 
-        <!-- Header -->
-        <div class="page-header">
-            <div>
-                <h1>Payments</h1>
-                <p>Milk payment calculations and records</p>
-            </div>
+        <div class="card">
+            <form id="paymentForm">
 
-            <button class="btn primary">+ Generate Payment</button>
+                <!-- Farmer input with searchable dropdown -->
+                <label>Farmer</label>
+                <input id="farmerInput" placeholder="Search farmer..." autocomplete="off">
+                <div class="custom-dropdown" id="farmersDropdown" aria-hidden="true"></div>
+                <input type="hidden" id="farmerId" name="farmerId">
+
+                <div class="row">
+                    <div>
+                        <label>Unpaid Milk (Liters)</label>
+                        <input type="number" id="unpaidLiters" readonly>
+                    </div>
+                    <div>
+                        <label>Total Amount (RWF)</label>
+                        <input type="number" id="amount" placeholder="Auto calculated" required>
+                    </div>
+                </div>
+
+                <label>Payment Method</label>
+                <select id="paymentMethod" required>
+                    <option value="">Select payment method</option>
+                    <option value="cash">Cash</option>
+                    <option value="Mobile money">Mobile Money</option>
+                    <option value="Bank transfer">Bank Transfer</option>
+                </select>
+
+                <button type="submit" class="btn">Generate Payment</button>
+                <div id="toast" class="toast"></div>
+
+            </form>
         </div>
-
-        <!-- Search -->
-        <div class="search-box">
-            <input type="text" placeholder="Search farmer or ID...">
-        </div>
-
-        <!-- Payments Table -->
-        <div class="table-card">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Farmer</th>
-                        <th>Farmer ID</th>
-                        <th>Total Liters</th>
-                        <th>Price / Liter (RWF)</th>
-                        <th>Total Amount (RWF)</th>
-                        <th>Interval</th>
-                        <th>Period Start</th>
-                        <th>Period End</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Kalisa Medard</td>
-                        <td>F0002</td>
-                        <td>200 L</td>
-                        <td>300</td>
-                        <td><strong>60,000</strong></td>
-                        <td>Monthly</td>
-                        <td>25 November 2025</td>
-                        <td>25 December 2025</td>
-                    </tr>
-
-                    <tr>
-                        <td>Kirezi Kevine</td>
-                        <td>F0003</td>
-                        <td>150 L</td>
-                        <td>300</td>
-                        <td><strong>45,000</strong></td>
-                        <td>Weekly</td>
-                        <td>18 December 2025</td>
-                        <td>25 December 2025</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
     </main>
 </div>
+
+<script>
+const farmerInput = document.getElementById('farmerInput');
+const farmersDropdown = document.getElementById('farmersDropdown');
+const farmerIdInput = document.getElementById('farmerId');
+const unpaidLitersInput = document.getElementById('unpaidLiters');
+const amountInput = document.getElementById('amount');
+const paymentForm = document.getElementById('paymentForm');
+const toast = document.getElementById('toast');
+
+let farmers = [];
+
+// Load farmers from backend
+async function loadFarmers() {
+    try {
+        const res = await fetch('https://milk-api-l8fd.onrender.com/api/user-names');
+        const data = await res.json();
+        farmers = data.users || [];
+    } catch(e) { console.error(e); farmers = []; }
+}
+loadFarmers();
+
+// Show dropdown options filtered by input
+function renderFarmerDropdown(filter='') {
+    farmersDropdown.innerHTML = '';
+    const q = filter.toLowerCase();
+    const matches = farmers.filter(f => f.fullname.toLowerCase().includes(q));
+    if(matches.length) {
+        matches.forEach(f => {
+            const div = document.createElement('div');
+            div.className = 'custom-option';
+            div.textContent = f.fullname;
+            div.dataset.id = f.id;
+            div.dataset.unpaid = f.unpaid_milk || 0;
+            div.addEventListener('click', () => selectFarmer(f));
+            farmersDropdown.appendChild(div);
+        });
+    } else {
+        const div = document.createElement('div');
+        div.className = 'custom-option';
+        div.textContent = 'No results';
+        farmersDropdown.appendChild(div);
+    }
+    farmersDropdown.style.display = 'block';
+    farmersDropdown.setAttribute('aria-hidden','false');
+}
+
+// Select a farmer from dropdown
+function selectFarmer(f) {
+    farmerInput.value = f.fullname;
+    farmerIdInput.value = f.id;
+    unpaidLitersInput.value = f.unpaid_milk || 0;
+    amountInput.value = (f.unpaid_milk || 0) * 300; // example price per liter
+    farmersDropdown.style.display = 'none';
+}
+
+// Event listeners
+farmerInput.addEventListener('focus', () => renderFarmerDropdown(farmerInput.value));
+farmerInput.addEventListener('input', () => renderFarmerDropdown(farmerInput.value));
+document.addEventListener('click', e => {
+    if(!farmerInput.contains(e.target) && !farmersDropdown.contains(e.target)) {
+        farmersDropdown.style.display = 'none';
+    }
+});
+
+// Submit payment
+paymentForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const farmerId = farmerIdInput.value;
+    const quantity = parseFloat(unpaidLitersInput.value);
+    const amount = parseFloat(amountInput.value);
+    const payment_method = document.getElementById('paymentMethod').value;
+
+    if(!farmerId){ showToast('Select a valid farmer', 'error'); return; }
+
+    try {
+        const res = await fetch('https://milk-api-l8fd.onrender.com/api/payment', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ farmer_id: farmerId, quantity, amount, payment_method })
+        });
+        const data = await res.json();
+        if(data.status === 'success'){
+            showToast('Payment created successfully!', 'success');
+            paymentForm.reset();
+            unpaidLitersInput.value = '';
+        } else {
+            showToast(data.message || 'Error creating payment', 'error');
+        }
+    } catch(err){
+        console.error(err);
+        showToast('Server error', 'error');
+    }
+});
+
+function showToast(msg, type){
+    toast.textContent = msg;
+    toast.className = 'toast ' + type;
+    toast.style.display = 'block';
+    setTimeout(()=> { toast.style.display = 'none'; }, 3000);
+}
+</script>
 
 </body>
 </html>
