@@ -2,6 +2,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     e.preventDefault();
 
     const messageBox = document.getElementById("formMessage");
+<<<<<<< HEAD
     const btnText = document.getElementById("btnText");
     const btnLoader = document.getElementById("btnLoader");
     const registerBtn = document.getElementById("registerBtn");
@@ -11,6 +12,9 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     btnText.style.display = "none";
     btnLoader.style.display = "inline";
     registerBtn.disabled = true;
+=======
+    messageBox.style.display = "none";
+>>>>>>> 4428343a1f07ca375e826188fc4cb9cf85f399b2
 
     const payload = {
         fullname: document.getElementById("fullname").value,
@@ -20,10 +24,16 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         passwordConfirmation: document.getElementById("passwordConfirmation").value
     };
 
+<<<<<<< HEAD
     // Frontend validation
     if (payload.password !== payload.passwordConfirmation) {
         showMessage("Passwords do not match", "error");
         stopLoading();
+=======
+    // Frontend check
+    if (payload.password !== payload.passwordConfirmation) {
+        showMessage("Passwords do not match", "error");
+>>>>>>> 4428343a1f07ca375e826188fc4cb9cf85f399b2
         return;
     }
 
@@ -51,17 +61,23 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         console.error(error);
     }
 
+<<<<<<< HEAD
     stopLoading();
 
+=======
+>>>>>>> 4428343a1f07ca375e826188fc4cb9cf85f399b2
     function showMessage(message, type) {
         messageBox.innerText = message;
         messageBox.className = `message ${type}`;
         messageBox.style.display = "block";
     }
+<<<<<<< HEAD
 
     function stopLoading() {
         btnText.style.display = "inline";
         btnLoader.style.display = "none";
         registerBtn.disabled = false;
     }
+=======
+>>>>>>> 4428343a1f07ca375e826188fc4cb9cf85f399b2
 });
