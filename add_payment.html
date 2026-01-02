@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Generate Payment</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+    }
+
+    .container {
+        padding: 25px;
+        max-width: 700px;
+        margin: auto;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    input[readonly] {
+        background: #f1f1f1;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .total-box {
+        margin-top: 20px;
+        padding: 15px;
+        background: #e9f2ff;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #0d6efd;
+    }
+
+    .btn {
+        margin-top: 25px;
+        padding: 12px;
+        width: 100%;
+        background:green;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background:green;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Generate Farmer Payment</h2>
+
+    <div class="card">
+        <form>
+
+            <label>Farmer Name</label>
+            <select>
+                <option>Select Farmer</option>
+                <option>Mutoni Peace</option>
+                <option>Mutesi Kevia</option>
+                <option>Gihozo Anitha</option>
+            </select>
+            <div class="row">
+
+
+                <div>
+                    <label>Total Milk (Liters)</label>
+                    <input type="number" value="" >
+                </div>
+            </div>
+                <div>
+                    <label>Total Amount (RWF)</label>
+                    <input type="number" value="21,000" >
+                </div>
+            </div>
+
+            <label>Payment Method</label>
+            <select>
+                <option>Select payment method</option>
+                <option>Mobile Money</option>
+                <option>Bank Transfer</option>
+                <option>Cash</option>
+            </select>
+
+            <label>Payment Status</label>
+            <select>
+                <option>Paid</option>
+                <option>Pending</option>
+            </select>
+           
+
+            <button id="recordBtn" class="btn primary" type="submit">
+                        <span class="btn-spinner" aria-hidden="true"></span>
+                        <span class="btn-text">Generate Payment</span>
+                    </button>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
