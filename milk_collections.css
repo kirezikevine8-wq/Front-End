@@ -113,8 +113,6 @@ body {
     border: 1px solid #ccc;
 }
 
-<<<<<<< HEAD
-=======
 /* Custom in-frame dropdown for searchable inputs */
 .custom-dropdown {
     display: none;
@@ -188,7 +186,6 @@ body {
 .btn.loading { pointer-events: none; opacity: 0.9; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
->>>>>>> 4428343a1f07ca375e826188fc4cb9cf85f399b2
 textarea {
     resize: none;
     height: 80px;
@@ -241,14 +238,11 @@ textarea {
     background: #e3f2fd;
     color: #1976d2;
 }
-<<<<<<< HEAD
-=======
 /* Poor quality badge */
 .badge.poor {
     background: #ffebee;
     color: #b71c1c;
 }
->>>>>>> 4428343a1f07ca375e826188fc4cb9cf85f399b2
 a {
     text-decoration: none;
 }
@@ -260,8 +254,6 @@ a:active {
     color: #333;
     text-decoration: none;
 }
-<<<<<<< HEAD
-=======
 
 /* Force dropdowns and option lists to use light background and dark text
    (helps on systems/browsers using dark native styles) */
@@ -273,4 +265,3 @@ input[list],
     background: #fff !important;
     color: #222 !important;
 }
->>>>>>> 4428343a1f07ca375e826188fc4cb9cf85f399b2

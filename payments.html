@@ -11,8 +11,9 @@ body { font-family: Arial, sans-serif; background: #f6f8fb; margin:0; }
 .sidebar .menu { list-style:none; padding:0; }
 .sidebar .menu li { margin-bottom:10px; }
 .sidebar .menu a { text-decoration:none; color:#333; display:block; padding:10px; }
+.sidebar .menu .active a { background:#2e7d32; color:#fff; border-radius:6px; }
 .main { flex:1; padding:30px; }
-.card { max-width:700px; background:#fff; padding:25px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
+.card { max-width:700px; background:#fff; padding:25px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.08); margin-top:20px; }
 label { display:block; margin-top:15px; font-weight:bold; color:#555; }
 input, select { width:100%; padding:10px; margin-top:6px; border-radius:5px; border:1px solid #ccc; }
 input[readonly] { background:#f1f1f1; }
@@ -24,6 +25,9 @@ input[readonly] { background:#f1f1f1; }
 .toast { padding:12px; margin-top:10px; border-radius:6px; color:white; display:none; }
 .toast.success { background: #2e7d32; }
 .toast.error { background: #e53935; }
+.small-note { font-weight: normal; font-size: 13px; margin-left:5px; color:#555; }
+.row { display:flex; gap:10px; flex-wrap:wrap; }
+.row > div { flex:1; min-width:150px; }
 </style>
 </head>
 <body>
@@ -32,18 +36,10 @@ input[readonly] { background:#f1f1f1; }
     <aside class="sidebar">
         <h2 class="logo">ADMIN PANEL</h2>
         <ul class="menu">
-<<<<<<< HEAD
-             <li><a href="admin_dashboard.html">Dashboard</li>
-            <li><a href="milk_collections.html">Collections</a></li>
-            <li class="active">Payments</li>
-            <li><a href="collection_centers.html">Collection Centers</a></li>
-            
-=======
             <li><a href="admin_dashboard.html">Dashboard</a></li>
-            <li><a href="milk_collection.html">Collections</a></li>
+            <li><a href="milk_collections.html">Collections</a></li>
             <li class="active"><a href="payments.html">Payments</a></li>
             <li><a href="collection_centers.html">Collection Centers</a></li>
->>>>>>> 4428343a1f07ca375e826188fc4cb9cf85f399b2
         </ul>
     </aside>
 
@@ -59,11 +55,15 @@ input[readonly] { background:#f1f1f1; }
                 <div class="custom-dropdown" id="farmersDropdown" aria-hidden="true"></div>
                 <input type="hidden" id="farmerId" name="farmerId">
 
+                <!-- Unpaid milk toggle -->
+                <label>
+                    Unpaid Milk (Liters)
+                    <input type="checkbox" id="autoMilk" checked>
+                    <span class="small-note">Auto calculate from unpaid milk</span>
+                </label>
+                <input type="number" id="unpaidLiters" readonly>
+
                 <div class="row">
-                    <div>
-                        <label>Unpaid Milk (Liters)</label>
-                        <input type="number" id="unpaidLiters" readonly>
-                    </div>
                     <div>
                         <label>Total Amount (RWF)</label>
                         <input type="number" id="amount" placeholder="Auto calculated" required>
@@ -94,8 +94,10 @@ const unpaidLitersInput = document.getElementById('unpaidLiters');
 const amountInput = document.getElementById('amount');
 const paymentForm = document.getElementById('paymentForm');
 const toast = document.getElementById('toast');
+const autoMilkCheckbox = document.getElementById('autoMilk');
 
 let farmers = [];
+const PRICE_PER_LITER = 300; // change as needed
 
 // Load farmers from backend
 async function loadFarmers() {
@@ -136,10 +138,36 @@ function renderFarmerDropdown(filter='') {
 function selectFarmer(f) {
     farmerInput.value = f.fullname;
     farmerIdInput.value = f.id;
-    unpaidLitersInput.value = f.unpaid_milk || 0;
-    amountInput.value = (f.unpaid_milk || 0) * 300; // example price per liter
+
+    if(autoMilkCheckbox.checked){
+        unpaidLitersInput.value = f.unpaid_milk || 0;
+        amountInput.value = (f.unpaid_milk || 0) * PRICE_PER_LITER;
+        unpaidLitersInput.setAttribute('readonly', true);
+    }
+
     farmersDropdown.style.display = 'none';
 }
+
+// Toggle auto/manual unpaid milk
+autoMilkCheckbox.addEventListener('change', () => {
+    if (autoMilkCheckbox.checked) {
+        unpaidLitersInput.setAttribute('readonly', true);
+        unpaidLitersInput.style.background = '#f1f1f1';
+        const liters = parseFloat(unpaidLitersInput.value) || 0;
+        amountInput.value = liters * PRICE_PER_LITER;
+    } else {
+        unpaidLitersInput.removeAttribute('readonly');
+        unpaidLitersInput.style.background = '#fff';
+        unpaidLitersInput.value = '';
+        amountInput.value = '';
+    }
+});
+
+// Manual amount recalculation
+unpaidLitersInput.addEventListener('input', () => {
+    const liters = parseFloat(unpaidLitersInput.value) || 0;
+    amountInput.value = liters * PRICE_PER_LITER;
+});
 
 // Event listeners
 farmerInput.addEventListener('focus', () => renderFarmerDropdown(farmerInput.value));
