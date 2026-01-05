@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reports</title>
+<style>
+/* General layout */
+body { font-family: Arial, sans-serif; background: #f6f8fb; margin:0; }
+.layout { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar { width: 230px; background: #fff; padding: 20px; }
+.sidebar .logo { text-align:center; color: #2e7d32; font-weight:bold; font-size:20px; margin-bottom:30px; }
+.sidebar .menu { list-style:none; padding:0; }
+.sidebar .menu li { margin-bottom:10px; }
+.sidebar .menu a { text-decoration:none; color:#333; display:block; padding:10px; border-radius:6px; transition:0.2s; }
+.sidebar .menu .active a, .sidebar .menu a:hover { background:#2e7d32; color:#fff; }
+
+/* Main content */
+.main { flex:1; padding:30px; }
+
+/* Card container for tabs */
+.card { background:#fff; padding:25px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.08); margin-top:20px; }
+
+/* Tabs */
+.tabs { display:flex; gap:10px; margin-bottom:20px; }
+.tab-btn { padding:10px 20px; background:#fff; border:1px solid #ccc; cursor:pointer; border-radius:6px 6px 0 0; transition:0.2s; }
+.tab-btn.active { background:#f1f1f1; border-bottom:2px solid #2e7d32; font-weight:bold; }
+.tab-content { display:none; background:#fff; padding:20px; border-radius:0 0 6px 6px; box-shadow:0 2px 6px rgba(0,0,0,0.05); min-height:200px; }
+.tab-content.active { display:block; }
+
+/* Tables */
+table { width:100%; border-collapse: collapse; margin-top:10px; }
+th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
+th { background-color:#f1f1f1; }
+tr:hover { background-color:#f9f9f9; }
+
+/* Loading spinner */
+.spinner {
+    display: none;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #2e7d32;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Responsive rows */
+.row { display:flex; gap:10px; flex-wrap:wrap; }
+.row > div { flex:1; min-width:150px; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2 class="logo">ADMIN PANEL</h2>
+        <ul class="menu">
+             <li><a href="admin_dashboard.html">Dashboard</a></li>
+           <li><a href="milk_collections.html">Collections</a></li>
+            <li><a href="payments.html">Payments</a></li>
+           <li><a href="collection_centers.html">Collection Centers</a></li>
+            <li><a href="#" class="menu-link" data-page="reports">Reports</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+        <h1>Reports</h1>
+        <div class="card">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab-btn active" data-target="users-tab">Users</div>
+                <div class="tab-btn" data-target="centers-tab">Collection Centers</div>
+                <div class="tab-btn" data-target="payments-tab">Payments</div>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="users-tab" class="tab-content active">
+                <div class="spinner" id="spinner-users"></div>
+                <table id="users-table">
+                    <thead>
+                        <tr><th>Full Name</th><th>Phone</th><th>Username</th><th>Role</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="centers-tab" class="tab-content">
+                <div class="spinner" id="spinner-centers"></div>
+                <table id="centers-table">
+                    <thead>
+                        <tr><th>Name</th><th>Phone</th><th>Price</th><th>Location</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="payments-tab" class="tab-content">
+                <div class="spinner" id="spinner-payments"></div>
+                <table id="payments-table">
+                    <thead>
+                        <tr><th>Farmer Name</th><th>Quantity</th><th>Amount</th><th>Payment Method</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+/* API Endpoints */
+const apiEndpoints = {
+    users: 'https://milk-api-l8fd.onrender.com/api/users', // Your API
+    centers: 'https://milk-api-l8fd.onrender.com/api/collection-centers',
+    payments: 'https://milk-api-l8fd.onrender.com/api/payments'
+};
+
+/* Fetch data from API */
+async function fetchData(endpoint){
+    try {
+        const res = await fetch(endpoint);
+        if(!res.ok) throw new Error('Network error: ' + res.status);
+        return await res.json();
+    } catch(e){
+        console.error('Fetch error:', e);
+        return [];
+    }
+}
+
+/* Populate table */
+function populateTable(tableId, data, columns){
+    const tbody = document.getElementById(tableId).querySelector('tbody');
+    tbody.innerHTML = '';
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        columns.forEach(col => {
+            const td = document.createElement('td');
+            td.textContent = item[col] ?? '';
+            row.appendChild(td);
+        });
+        tbody.appendChild(row);
+    });
+}
+
+/* Show spinner */
+function showSpinner(spinnerId, show){
+    document.getElementById(spinnerId).style.display = show ? 'block' : 'none';
+}
+
+/* Load data for a specific tab */
+async function loadTabData(tab){
+    if(tab === 'users-tab'){
+        showSpinner('spinner-users', true);
+        const res = await fetchData(apiEndpoints.users);
+        const users = Array.isArray(res) ? res : (res.users || res.data || []);
+        const mappedUsers = users.map(u => ({
+            fullname: u.fullname || u.name || '',
+            phone: u.phone || '',
+            username: u.username || '',
+            role: u.role || ''
+        }));
+        populateTable('users-table', mappedUsers, ['fullname','phone','username','role']);
+        showSpinner('spinner-users', false);
+    }
+    else if(tab === 'centers-tab'){
+        showSpinner('spinner-centers', true);
+        const res = await fetchData(apiEndpoints.centers);
+        const centers = Array.isArray(res) ? res : (res.centers || res.data || []);
+        const mappedCenters = centers.map(c => ({
+            name: c.name || '',
+            phone: c.phone || '',
+            price: c.price || '',
+            location: c.location || ''
+        }));
+        populateTable('centers-table', mappedCenters, ['name','phone','price','location']);
+        showSpinner('spinner-centers', false);
+    }
+    else if(tab === 'payments-tab'){
+        showSpinner('spinner-payments', true);
+        const res = await fetchData(apiEndpoints.payments);
+        const payments = Array.isArray(res) ? res : (res.payments || res.data || []);
+
+        const mappedPayments = payments.map(p => ({
+            farmerName: p.farmer_name || p.farmerName || p.name || '',
+            quantity: p.quantity || '',
+            amount: p.amount || '',
+            paymentMethod: p.payment_method || p.method || p.paymentMethod || ''
+        }));
+        populateTable('payments-table', mappedPayments, ['farmerName','quantity','amount','paymentMethod']);
+        showSpinner('spinner-payments', false);
+    }
+}
+
+/* Tabs functionality */
+const tabs = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const target = tab.getAttribute('data-target');
+        tabContents.forEach(c => c.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
+
+        loadTabData(target); // Load data when tab clicked
+    });
+});
+
+/* Load Users tab by default */
+loadTabData('users-tab');
+</script>
+
+</body>
+</html>
