@@ -19,15 +19,18 @@ input, select { width:80%; padding:8px; margin-top:4px; border-radius:4px; borde
 input[readonly] { background:#f1f1f1; }
 .btn { margin-top:22px; padding:10px; width:80%; background:green; color:white; border:none; border-radius:6px; font-size:15px; cursor:pointer; }
 .btn:hover { background:darkgreen; }
-.custom-dropdown { position: absolute; background: #fff; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; width: calc(100% - 2px); display: none; z-index: 999; }
-.custom-dropdown .custom-option { padding: 10px; cursor: pointer; }
-.custom-dropdown .custom-option:hover { background: #f0f0f0; }
 .toast { padding:12px; margin-top:10px; border-radius:6px; color:white; display:none; }
 .toast.success { background: #2e7d32; }
 .toast.error { background: #e53935; }
 .small-note { font-weight: normal; font-size: 13px; margin-left:5px; color:#555; }
 .row { display:flex; gap:10px; flex-wrap:wrap; }
 .row > div { flex:1; min-width:150px; }
+
+/* Farmer dropdown styling */
+.farmer-container { position: relative; width: 80%; }
+#farmersDropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border:1px solid #ccc; max-height:200px; overflow-y:auto; display:none; z-index:1000; }
+#farmersDropdown .custom-option { padding:8px; cursor:pointer; }
+#farmersDropdown .custom-option:hover { background:#f0f0f0; }
 </style>
 </head>
 <body>
@@ -51,8 +54,10 @@ input[readonly] { background:#f1f1f1; }
 
                 <!-- Farmer input with searchable dropdown -->
                 <label>Farmer</label>
-                <input id="farmerInput" placeholder="Search farmer..." autocomplete="off">
-                <div class="custom-dropdown" id="farmersDropdown" aria-hidden="true"></div>
+                <div class="farmer-container">
+                    <input id="farmerInput" placeholder="Search farmer..." autocomplete="off">
+                    <div id="farmersDropdown"></div>
+                </div>
                 <input type="hidden" id="farmerId" name="farmerId">
 
                 <!-- Unpaid milk toggle -->
@@ -63,6 +68,11 @@ input[readonly] { background:#f1f1f1; }
                 </label>
                 <input type="number" id="unpaidLiters" readonly>
 
+                <!-- Unit Price -->
+                <label>Unit Price (RWF)</label>
+                <input type="number" id="unitPrice" readonly>
+
+                <!-- Total Amount -->
                 <div class="row">
                     <div>
                         <label>Total Amount (RWF)</label>
@@ -70,6 +80,7 @@ input[readonly] { background:#f1f1f1; }
                     </div>
                 </div>
 
+                <!-- Payment Method -->
                 <label>Payment Method</label>
                 <select id="paymentMethod" required>
                     <option value="">Select payment method</option>
@@ -91,36 +102,38 @@ const farmerInput = document.getElementById('farmerInput');
 const farmersDropdown = document.getElementById('farmersDropdown');
 const farmerIdInput = document.getElementById('farmerId');
 const unpaidLitersInput = document.getElementById('unpaidLiters');
+const unitPriceInput = document.getElementById('unitPrice');
 const amountInput = document.getElementById('amount');
 const paymentForm = document.getElementById('paymentForm');
 const toast = document.getElementById('toast');
 const autoMilkCheckbox = document.getElementById('autoMilk');
 
 let farmers = [];
-const PRICE_PER_LITER = 300; // change as needed
+let selectedUnitPrice = 0;
 
-// Load farmers from backend
+// Load farmers from API
 async function loadFarmers() {
     try {
         const res = await fetch('https://milk-api-l8fd.onrender.com/api/user-names');
         const data = await res.json();
         farmers = data.users || [];
-    } catch(e) { console.error(e); farmers = []; }
+    } catch(e) {
+        console.error(e); 
+        farmers = [];
+    }
 }
 loadFarmers();
 
-// Show dropdown options filtered by input
+// Render dropdown
 function renderFarmerDropdown(filter='') {
     farmersDropdown.innerHTML = '';
     const q = filter.toLowerCase();
     const matches = farmers.filter(f => f.fullname.toLowerCase().includes(q));
-    if(matches.length) {
+    if(matches.length){
         matches.forEach(f => {
             const div = document.createElement('div');
             div.className = 'custom-option';
             div.textContent = f.fullname;
-            div.dataset.id = f.id;
-            div.dataset.unpaid = f.unpaid_milk || 0;
             div.addEventListener('click', () => selectFarmer(f));
             farmersDropdown.appendChild(div);
         });
@@ -131,45 +144,47 @@ function renderFarmerDropdown(filter='') {
         farmersDropdown.appendChild(div);
     }
     farmersDropdown.style.display = 'block';
-    farmersDropdown.setAttribute('aria-hidden','false');
 }
 
-// Select a farmer from dropdown
+// Select farmer and show unpaid liters & unit price
 function selectFarmer(f) {
     farmerInput.value = f.fullname;
     farmerIdInput.value = f.id;
 
+    const quantity = f.total_quantity || 0;
+    selectedUnitPrice = f.unit_price || 0;
+
+    unpaidLitersInput.value = quantity;
+    unitPriceInput.value = selectedUnitPrice;
+    amountInput.value = quantity * selectedUnitPrice;
+
     if(autoMilkCheckbox.checked){
-        unpaidLitersInput.value = f.unpaid_milk || 0;
-        amountInput.value = (f.unpaid_milk || 0) * PRICE_PER_LITER;
         unpaidLitersInput.setAttribute('readonly', true);
     }
 
     farmersDropdown.style.display = 'none';
 }
 
-// Toggle auto/manual unpaid milk
+// Auto/manual toggle
 autoMilkCheckbox.addEventListener('change', () => {
     if (autoMilkCheckbox.checked) {
         unpaidLitersInput.setAttribute('readonly', true);
-        unpaidLitersInput.style.background = '#f1f1f1';
         const liters = parseFloat(unpaidLitersInput.value) || 0;
-        amountInput.value = liters * PRICE_PER_LITER;
+        amountInput.value = liters * selectedUnitPrice;
     } else {
         unpaidLitersInput.removeAttribute('readonly');
-        unpaidLitersInput.style.background = '#fff';
         unpaidLitersInput.value = '';
         amountInput.value = '';
     }
 });
 
-// Manual amount recalculation
+// Recalculate amount if manually changing liters
 unpaidLitersInput.addEventListener('input', () => {
     const liters = parseFloat(unpaidLitersInput.value) || 0;
-    amountInput.value = liters * PRICE_PER_LITER;
+    amountInput.value = liters * selectedUnitPrice;
 });
 
-// Event listeners
+// Event listeners for dropdown
 farmerInput.addEventListener('focus', () => renderFarmerDropdown(farmerInput.value));
 farmerInput.addEventListener('input', () => renderFarmerDropdown(farmerInput.value));
 document.addEventListener('click', e => {
@@ -199,6 +214,8 @@ paymentForm.addEventListener('submit', async e => {
             showToast('Payment created successfully!', 'success');
             paymentForm.reset();
             unpaidLitersInput.value = '';
+            unitPriceInput.value = '';
+            amountInput.value = '';
         } else {
             showToast(data.message || 'Error creating payment', 'error');
         }
