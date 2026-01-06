@@ -7,7 +7,6 @@
 /* General layout */
 body { font-family: Arial, sans-serif; background: #f6f8fb; margin:0; }
 .layout { display: flex; min-height: 100vh; }
-
 /* Sidebar */
 .sidebar { width: 230px; background: #fff; padding: 20px; }
 .sidebar .logo { text-align:center; color: #2e7d32; font-weight:bold; font-size:20px; margin-bottom:30px; }
@@ -15,39 +14,28 @@ body { font-family: Arial, sans-serif; background: #f6f8fb; margin:0; }
 .sidebar .menu li { margin-bottom:10px; }
 .sidebar .menu a { text-decoration:none; color:#333; display:block; padding:10px; border-radius:6px; transition:0.2s; }
 .sidebar .menu .active a, .sidebar .menu a:hover { background:#2e7d32; color:#fff; }
-
 /* Main content */
 .main { flex:1; padding:30px; }
-
 /* Card container for tabs */
 .card { background:#fff; padding:25px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.08); margin-top:20px; }
-
+/* Export button */
+.export-bar { display:flex; justify-content:flex-end; gap:10px; margin-bottom:10px; }
+.export-bar button { background:#2e7d32; color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; }
+.export-bar button:hover { background:#256628; }
 /* Tabs */
 .tabs { display:flex; gap:10px; margin-bottom:20px; }
 .tab-btn { padding:10px 20px; background:#fff; border:1px solid #ccc; cursor:pointer; border-radius:6px 6px 0 0; transition:0.2s; }
 .tab-btn.active { background:#f1f1f1; border-bottom:2px solid #2e7d32; font-weight:bold; }
 .tab-content { display:none; background:#fff; padding:20px; border-radius:0 0 6px 6px; box-shadow:0 2px 6px rgba(0,0,0,0.05); min-height:200px; }
 .tab-content.active { display:block; }
-
 /* Tables */
 table { width:100%; border-collapse: collapse; margin-top:10px; }
 th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
-th { background-color:#f1f1f1; }
+th { background-color:#f1f1f1; font-weight:bold; }
 tr:hover { background-color:#f9f9f9; }
-
 /* Loading spinner */
-.spinner {
-    display: none;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #2e7d32;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
-}
+.spinner { display: none; border: 4px solid #f3f3f3; border-top: 4px solid #2e7d32; border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin: 20px auto; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
 /* Responsive rows */
 .row { display:flex; gap:10px; flex-wrap:wrap; }
 .row > div { flex:1; min-width:150px; }
@@ -61,10 +49,10 @@ tr:hover { background-color:#f9f9f9; }
         <h2 class="logo">ADMIN PANEL</h2>
         <ul class="menu">
              <li><a href="admin_dashboard.html">Dashboard</a></li>
-           <li><a href="milk_collections.html">Collections</a></li>
-            <li><a href="payments.html">Payments</a></li>
-           <li><a href="collection_centers.html">Collection Centers</a></li>
-            <li><a href="#" class="menu-link" data-page="reports">Reports</a></li>
+             <li><a href="milk_collections.html">Collections</a></li>
+             <li><a href="payments.html">Payments</a></li>
+             <li><a href="collection_centers.html">Collection Centers</a></li>
+             <li><a href="#" class="menu-link" data-page="reports">Reports</a></li>
         </ul>
     </aside>
 
@@ -72,6 +60,11 @@ tr:hover { background-color:#f9f9f9; }
     <main class="main">
         <h1>Reports</h1>
         <div class="card">
+            <!-- PDF Export button only -->
+            <div class="export-bar">
+                <button onclick="exportAllPDF()">📄 Export All to PDF</button>
+            </div>
+
             <!-- Tabs -->
             <div class="tabs">
                 <div class="tab-btn active" data-target="users-tab">Users</div>
@@ -113,15 +106,17 @@ tr:hover { background-color:#f9f9f9; }
     </main>
 </div>
 
+<!-- JS Libraries for PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
 <script>
-/* API Endpoints */
 const apiEndpoints = {
-    users: 'https://milk-api-l8fd.onrender.com/api/users', // Your API
+    users: 'https://milk-api-l8fd.onrender.com/api/users',
     centers: 'https://milk-api-l8fd.onrender.com/api/collection-centers',
     payments: 'https://milk-api-l8fd.onrender.com/api/payments'
 };
 
-/* Fetch data from API */
 async function fetchData(endpoint){
     try {
         const res = await fetch(endpoint);
@@ -133,7 +128,6 @@ async function fetchData(endpoint){
     }
 }
 
-/* Populate table */
 function populateTable(tableId, data, columns){
     const tbody = document.getElementById(tableId).querySelector('tbody');
     tbody.innerHTML = '';
@@ -148,51 +142,46 @@ function populateTable(tableId, data, columns){
     });
 }
 
-/* Show spinner */
 function showSpinner(spinnerId, show){
     document.getElementById(spinnerId).style.display = show ? 'block' : 'none';
 }
 
-/* Load data for a specific tab */
 async function loadTabData(tab){
     if(tab === 'users-tab'){
         showSpinner('spinner-users', true);
         const res = await fetchData(apiEndpoints.users);
         const users = Array.isArray(res) ? res : (res.users || res.data || []);
         const mappedUsers = users.map(u => ({
-            fullname: u.fullname || u.name || '',
-            phone: u.phone || '',
-            username: u.username || '',
-            role: u.role || ''
+            "Full Name": u.fullname || u.name || '',
+            "Phone": u.phone || '',
+            "Username": u.username || '',
+            "Role": u.role || ''
         }));
-        populateTable('users-table', mappedUsers, ['fullname','phone','username','role']);
+        populateTable('users-table', mappedUsers, ["Full Name","Phone","Username","Role"]);
         showSpinner('spinner-users', false);
-    }
-    else if(tab === 'centers-tab'){
+    } else if(tab === 'centers-tab'){
         showSpinner('spinner-centers', true);
         const res = await fetchData(apiEndpoints.centers);
         const centers = Array.isArray(res) ? res : (res.centers || res.data || []);
         const mappedCenters = centers.map(c => ({
-            name: c.name || '',
-            phone: c.phone || '',
-            price: c.price || '',
-            location: c.location || ''
+            "Name": c.name || '',
+            "Phone": c.phone || '',
+            "Price": c.price || '',
+            "Location": c.location || ''
         }));
-        populateTable('centers-table', mappedCenters, ['name','phone','price','location']);
+        populateTable('centers-table', mappedCenters, ["Name","Phone","Price","Location"]);
         showSpinner('spinner-centers', false);
-    }
-    else if(tab === 'payments-tab'){
+    } else if(tab === 'payments-tab'){
         showSpinner('spinner-payments', true);
         const res = await fetchData(apiEndpoints.payments);
         const payments = Array.isArray(res) ? res : (res.payments || res.data || []);
-
         const mappedPayments = payments.map(p => ({
-            farmerName: p.farmer_name || p.farmerName || p.name || '',
-            quantity: p.quantity || '',
-            amount: p.amount || '',
-            paymentMethod: p.payment_method || p.method || p.paymentMethod || ''
+            "Farmer Name": p.farmer_name || p.farmerName || p.name || '',
+            "Quantity": p.quantity || '',
+            "Amount": p.amount || '',
+            "Payment Method": p.payment_method || p.method || p.paymentMethod || ''
         }));
-        populateTable('payments-table', mappedPayments, ['farmerName','quantity','amount','paymentMethod']);
+        populateTable('payments-table', mappedPayments, ["Farmer Name","Quantity","Amount","Payment Method"]);
         showSpinner('spinner-payments', false);
     }
 }
@@ -200,21 +189,61 @@ async function loadTabData(tab){
 /* Tabs functionality */
 const tabs = document.querySelectorAll('.tab-btn');
 const tabContents = document.querySelectorAll('.tab-content');
-
 tabs.forEach(tab => {
     tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-
         const target = tab.getAttribute('data-target');
         tabContents.forEach(c => c.classList.remove('active'));
         document.getElementById(target).classList.add('active');
-
-        loadTabData(target); // Load data when tab clicked
+        loadTabData(target);
     });
 });
 
-/* Load Users tab by default */
+/* PDF Export */
+async function exportAllPDF(){
+    await loadTabData('users-tab');
+    await loadTabData('centers-tab');
+    await loadTabData('payments-tab');
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const tables = [
+        ['users-table', 'Users'],
+        ['centers-table', 'Collection Centers'],
+        ['payments-table', 'Payments']
+    ];
+
+    let yOffset = 10;
+
+    tables.forEach(([id, title])=>{
+        const table = document.getElementById(id);
+        const headers = Array.from(table.querySelectorAll('thead th')).map(th=>th.innerText);
+        headers.unshift('No');
+
+        const rows = Array.from(table.querySelectorAll('tbody tr')).map((tr,i)=>{
+            const tds = Array.from(tr.querySelectorAll('td')).map(td=>td.innerText);
+            tds.unshift(i+1);
+            return tds;
+        });
+
+        doc.text(title, 14, yOffset);
+        doc.autoTable({
+            startY: yOffset + 6,
+            head: [headers],
+            body: rows,
+            theme: 'grid',
+            headStyles: { fillColor: [46, 125, 50], textColor: 255, fontStyle:'bold' },
+            styles: { fontSize: 10 }
+        });
+        yOffset = doc.lastAutoTable.finalY + 10;
+    });
+
+    doc.save("report.pdf");
+}
+
+/* Load default tab */
 loadTabData('users-tab');
 </script>
 
