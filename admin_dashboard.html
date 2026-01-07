@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="admin_dashboard.css">
 </head>
 <body>
+
 <div class="layout">
 
     <!-- Sidebar -->
@@ -16,13 +17,14 @@
             <li class="active">Dashboard</li>
             <li><a href="milk_collections.html">Collections</a></li>
             <li><a href="payments.html">Payments</a></li>
-           <li><a href="collection_centers.html">Collection Centers</a></li>
-           <li><a href="reports.html">Reports</a></li>
+            <li><a href="collection_centers.html">Collection Centers</a></li>
+            <li><a href="reports.html">Reports</a></li>
         </ul>
     </aside>
 
     <!-- Main Content -->
     <main class="main">
+
         <div class="header">
             <h1>Dashboard</h1>
             <p>Overview of your dairy management system</p>
@@ -32,45 +34,95 @@
 
             <div class="card">
                 <h4>Total Farmers</h4>
-                <h2>6</h2>
+                <h2 id="totalFarmers">0</h2>
                 <span class="note">Registered farmers</span>
             </div>
 
             <div class="card">
                 <h4>Active Farmers</h4>
-                <h2>6</h2>
+                <h2 id="activeFarmers">0</h2>
                 <span class="note">Active this month</span>
             </div>
 
             <div class="card">
                 <h4>Today's Collection</h4>
-                <h2>50L</h2>
+                <h2 id="todayCollection">0L</h2>
                 <span class="note">Fresh milk collected</span>
             </div>
 
             <div class="card">
                 <h4>Monthly Collection</h4>
-                <h2>650L</h2>
+                <h2 id="monthlyCollection">0L</h2>
                 <span class="note">Total this month</span>
             </div>
 
             <div class="card warning">
                 <h4>Low Quality Deliveries</h4>
-                <h2>0</h2>
+                <h2 id="lowQuality">0</h2>
                 <span class="note">Require attention</span>
             </div>
 
             <div class="card revenue">
                 <h4>Monthly Revenue</h4>
-                <h2>181,000 RWF</h2>
+                <h2 id="monthlyRevenue">0 RWF</h2>
                 <span class="note">This month</span>
             </div>
 
         </div>
+
     </main>
 
 </div>
 
+<!-- DASHBOARD SCRIPT -->
+<script>
+const API_URL = "https://milk-api-l8fd.onrender.com/api/stats";
+const PRICE_PER_LITER = 350; // 🔴 CHANGE THIS IF NEEDED
+
+function loadDashboardStats() {
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === "success") {
+                const d = result.data;
+
+                // Basic stats
+                document.getElementById("totalFarmers").textContent =
+                    d.total_farmers;
+
+                document.getElementById("activeFarmers").textContent =
+                    d.active_farmers;
+
+                document.getElementById("todayCollection").textContent =
+                    d.todays_collection_liters + "L";
+
+                // Monthly collection
+                const monthlyLiters = d.monthly_collection_liters || 0;
+
+                document.getElementById("monthlyCollection").textContent =
+                    monthlyLiters + "L";
+
+                document.getElementById("lowQuality").textContent =
+                    d.low_quality_deliveries;
+
+                // ✅ FRONTEND-CALCULATED REVENUE (AUTO-UPDATES)
+                const calculatedRevenue = monthlyLiters * PRICE_PER_LITER;
+
+                document.getElementById("monthlyRevenue").textContent =
+                    calculatedRevenue.toLocaleString() + " RWF";
+            }
+        })
+        .catch(error => {
+            console.error("Dashboard API error:", error);
+        });
+}
+
+// Initial load
+loadDashboardStats();
+
+// Refresh every 30 seconds
+setInterval(loadDashboardStats, 30000);
+</script>
+
 </body>
 </html>
-
