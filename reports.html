@@ -13,7 +13,7 @@ body { font-family: Arial, sans-serif; background: #f6f8fb; margin:0; }
 .sidebar .menu { list-style:none; padding:0; }
 .sidebar .menu li { margin-bottom:10px; }
 .sidebar .menu a { text-decoration:none; color:#333; display:block; padding:10px; border-radius:6px; transition:0.2s; }
-.sidebar .menu .active a, .sidebar .menu a:hover { background:#2e7d32; color:#fff; }
+.sidebar .menu .active a, .sidebar .menu a:hover { background:#a1c0a2; color:#0b0000; }
 /* Main content */
 .main { flex:1; padding:30px; }
 /* Card container for tabs */
@@ -52,7 +52,7 @@ tr:hover { background-color:#f9f9f9; }
              <li><a href="milk_collections.html">Collections</a></li>
              <li><a href="payments.html">Payments</a></li>
              <li><a href="collection_centers.html">Collection Centers</a></li>
-             <li><a href="#" class="menu-link" data-page="reports">Reports</a></li>
+             <li class="active"><a href="#" class="menu-link" data-page="reports">Reports</a></li>
         </ul>
     </aside>
 
@@ -60,9 +60,9 @@ tr:hover { background-color:#f9f9f9; }
     <main class="main">
         <h1>Reports</h1>
         <div class="card">
-            <!-- PDF Export button only -->
+            <!-- PDF Export button -->
             <div class="export-bar">
-                <button onclick="exportAllPDF()">📄 Export All to PDF</button>
+                <button onclick="exportPDFSingle()">📄 Export PDF</button>
             </div>
 
             <!-- Tabs -->
@@ -111,12 +111,14 @@ tr:hover { background-color:#f9f9f9; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
 <script>
+// API endpoints
 const apiEndpoints = {
     users: 'https://milk-api-l8fd.onrender.com/api/users',
     centers: 'https://milk-api-l8fd.onrender.com/api/collection-centers',
     payments: 'https://milk-api-l8fd.onrender.com/api/payments'
 };
 
+// Fetch data
 async function fetchData(endpoint){
     try {
         const res = await fetch(endpoint);
@@ -128,6 +130,7 @@ async function fetchData(endpoint){
     }
 }
 
+// Populate table
 function populateTable(tableId, data, columns){
     const tbody = document.getElementById(tableId).querySelector('tbody');
     tbody.innerHTML = '';
@@ -142,10 +145,12 @@ function populateTable(tableId, data, columns){
     });
 }
 
+// Spinner show/hide
 function showSpinner(spinnerId, show){
     document.getElementById(spinnerId).style.display = show ? 'block' : 'none';
 }
 
+// Load tab data
 async function loadTabData(tab){
     if(tab === 'users-tab'){
         showSpinner('spinner-users', true);
@@ -200,50 +205,43 @@ tabs.forEach(tab => {
     });
 });
 
-/* PDF Export */
-async function exportAllPDF(){
-    await loadTabData('users-tab');
-    await loadTabData('centers-tab');
-    await loadTabData('payments-tab');
+// Export only the active tab
+async function exportPDFSingle(){
+    const activeTabContent = document.querySelector('.tab-content.active');
+    if(!activeTabContent) return;
+
+    const table = activeTabContent.querySelector('table');
+    if(!table){ alert("No table found in this tab!"); return; }
+
+    const tabTitle = activeTabContent.id.replace('-tab','').replace(/\b\w/g, c => c.toUpperCase());
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    const tables = [
-        ['users-table', 'Users'],
-        ['centers-table', 'Collection Centers'],
-        ['payments-table', 'Payments']
-    ];
+    const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText);
+    headers.unshift('No');
 
-    let yOffset = 10;
-
-    tables.forEach(([id, title])=>{
-        const table = document.getElementById(id);
-        const headers = Array.from(table.querySelectorAll('thead th')).map(th=>th.innerText);
-        headers.unshift('No');
-
-        const rows = Array.from(table.querySelectorAll('tbody tr')).map((tr,i)=>{
-            const tds = Array.from(tr.querySelectorAll('td')).map(td=>td.innerText);
-            tds.unshift(i+1);
-            return tds;
-        });
-
-        doc.text(title, 14, yOffset);
-        doc.autoTable({
-            startY: yOffset + 6,
-            head: [headers],
-            body: rows,
-            theme: 'grid',
-            headStyles: { fillColor: [46, 125, 50], textColor: 255, fontStyle:'bold' },
-            styles: { fontSize: 10 }
-        });
-        yOffset = doc.lastAutoTable.finalY + 10;
+    const rows = Array.from(table.querySelectorAll('tbody tr')).map((tr,i)=>{
+        const tds = Array.from(tr.querySelectorAll('td')).map(td=>td.innerText);
+        tds.unshift(i+1);
+        return tds;
     });
 
-    doc.save("report.pdf");
+    doc.text(tabTitle + " Report", 14, 10);
+
+    doc.autoTable({
+        startY:16,
+        head:[headers],
+        body:rows,
+        theme:'grid',
+        headStyles:{ fillColor:[46,125,50], textColor:255, fontStyle:'bold' },
+        styles:{ fontSize:10 }
+    });
+
+    doc.save(tabTitle + "_report.pdf");
 }
 
-/* Load default tab */
+// Load default tab
 loadTabData('users-tab');
 </script>
 

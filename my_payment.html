@@ -5,100 +5,107 @@
 <title>My Payments</title>
 
 <style>
-/* ===== Base ===== */
+/* ===== Layout (SAME AS MY DELIVERIES) ===== */
 body {
-    margin:0;
-    font-family: Arial, sans-serif;
-    background:#f4f6f8;
+  font-family: Arial, sans-serif;
+  background:#f6f8fb;
+  margin:0;
 }
 
 .layout {
-    display:flex;
-    min-height:100vh;
+  display:flex;
+  min-height:100vh;
 }
 
-/* ===== Sidebar ===== */
+/* Sidebar */
 .sidebar {
-    width:220px;
-    background:#fff;
-    padding:20px;
+  width:230px;
+  background:#fff;
+  padding:20px;
 }
 
-.sidebar ul {
-    list-style:none;
-    padding:0;
+.sidebar .logo {
+  text-align:center;
+  color:#2e7d32;
+  margin-bottom:30px;
+  font-weight:bold;
 }
 
-.sidebar li {
-    margin-bottom:12px;
+.sidebar .menu {
+  list-style:none;
+  padding:0;
 }
 
-.sidebar a {
-    text-decoration:none;
-    color:#333;
-    display:block;
-    padding:10px;
+.sidebar .menu li {
+  margin-bottom:10px;
+  cursor:pointer;
 }
 
-.sidebar a:hover {
-    color:#2e7d32;
+.sidebar .menu li.active {
+  background:#e0e0e0;
+  border-radius:5px;
 }
 
-/* ===== Main ===== */
+.sidebar .menu li:hover {
+  background:#f0f0f0;
+  border-radius:5px;
+}
+
+.sidebar .menu li a {
+  text-decoration:none;
+  color:#333;
+  display:block;
+  padding:10px;
+}
+
+/* Main */
 .main {
-    flex:1;
-    padding:30px;
+  flex:1;
+  padding:30px;
 }
 
-/* ===== Header ===== */
-.header h1 {
-    margin:0;
-    color:#333;
+h1 {
+  margin-bottom:10px;
+  color:#333;
 }
 
-.header p {
-    margin-top:5px;
-    color:#555;
+/* Table Card (same style) */
+.table-card {
+  background:#fff;
+  padding:20px;
+  border-radius:8px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
+  margin-top:20px;
 }
 
-/* ===== Card (ADMIN STYLE) ===== */
-.card {
-    background:#fff;
-    padding:25px;
-    border-radius:6px;
-    margin-top:20px;
-    box-shadow:0 1px 6px rgba(0,0,0,0.08);
+.table-card table {
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
 }
 
-/* ===== Table ===== */
-table {
-    width:100%;
-    border-collapse:collapse;
-    margin-top:15px;
-    background:#fff;
+.table-card th,
+.table-card td {
+  text-align:left;
+  padding:10px;
+  border-bottom:1px solid #ddd;
 }
 
-th {
-    background:#f1f3f5;
-    text-align:left;
-    padding:12px;
-    font-size:14px;
+.table-card th {
+  background:#f2f2f2;
 }
 
-td {
-    padding:12px;
-    border-bottom:1px solid #e0e0e0;
-    font-size:14px;
+.table-card tr:hover {
+  background:#f9f9f9;
 }
 
-.status-paid {
-    color:#2e7d32;
-    font-weight:bold;
-}
-
-.status-pending {
-    color:#f57c00;
-    font-weight:bold;
+/* Remove link colors */
+a,
+a:visited,
+a:hover,
+a:active {
+  color:#333;
+  text-decoration:none;
 }
 </style>
 </head>
@@ -107,67 +114,84 @@ td {
 
 <div class="layout">
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <ul>
-            <li><a href="user_dashboard.html">Dashboard</a></li>
-             <li><a href="my_deliveries.html">My Deliveries</a></li>
-            <li><a href="#">My Payments</a></li>
-            <li><a href="profile.html">Profile</a></li>
-            <li><a href="#">Settings</a></li>
-        </ul>
-    </aside>
+  <!-- Sidebar (SAME AS MY DELIVERIES) -->
+  <aside class="sidebar">
+    <h2 class="logo">USER PANEL</h2>
+    <ul class="menu">
+      <li><a href="user_dashboard.html">Dashboard</a></li>
+      <li><a href="my_deliveries.html">My Deliveries</a></li>
+      <li class="active"><a href="#">My Payments</a></li>
+      <li><a href="profile.html">Profile</a></li>
+      <li><a href="#">Settings</a></li>
+    </ul>
+  </aside>
 
-    <!-- Main -->
-    <main class="main">
+  <!-- Main Content -->
+  <main class="main">
+    <h1>My Payments</h1>
+   
 
-        <div class="header">
-            <h1>My Payments</h1>
-            <p>Track your milk payments history</p>
-        </div>
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Quantity (Liters)</th>
+            <th>Amount (RWF)</th>
+            <th>Payment Method</th>
+            <th>Date</th>
+          </tr>
+        </thead>
 
-        <div class="card">
-            <h3>Payment History</h3>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Quantity (L)</th>
-                        <th>Amount (RWF)</th>
-                        <th>Payment Method</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>2026-01-01</td>
-                        <td>15</td>
-                        <td>4,500</td>
-                        <td>Cash</td>
-                        <td class="status-paid">Paid</td>
-                    </tr>
-                    <tr>
-                        <td>2026-01-02</td>
-                        <td>20</td>
-                        <td>6,000</td>
-                        <td>Mobile Money</td>
-                        <td class="status-pending">Pending</td>
-                    </tr>
-                    <tr>
-                        <td>2026-01-03</td>
-                        <td>10</td>
-                        <td>3,000</td>
-                        <td>Bank Transfer</td>
-                        <td class="status-paid">Paid</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-    </main>
+        <!-- IMPORTANT: JS FILLS THIS -->
+        <tbody id="paymentBody">
+          <tr>
+            <td colspan="5">Loading payments...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
 
 </div>
+
+<!-- ===== API CONNECTION (UNCHANGED CONTENT) ===== -->
+<script>
+  const farmerId = "262888f5-eecb-4696-8833-f17dcd77fa6f";
+  const apiUrl = `https://node-uuig.onrender.com/api/payment-page/${farmerId}`;
+
+  fetch(apiUrl)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById("paymentBody");
+      tbody.innerHTML = "";
+
+      if (!data.payments || data.payments.length === 0) {
+        tbody.innerHTML =
+          "<tr><td colspan='5'>No payments found</td></tr>";
+        return;
+      }
+
+      data.payments.forEach((p, index) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${p.quantity}</td>
+          <td>${Number(p.amount).toLocaleString()}</td>
+          <td>${p.payment_method}</td>
+          <td>${new Date(p.created_at).toLocaleDateString()}</td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("paymentBody").innerHTML =
+        "<tr><td colspan='5'>Failed to load payments</td></tr>";
+    });
+</script>
 
 </body>
 </html>
