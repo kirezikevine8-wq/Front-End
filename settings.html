@@ -40,6 +40,13 @@ body {
     padding:10px;
 }
 
+.sidebar .logo {
+  text-align:center;
+  color:#2e7d32;
+  margin-bottom:30px;
+  font-weight:bold;
+}
+
 .sidebar a:hover {
     color:#2e7d32;
 }
@@ -130,12 +137,14 @@ button:hover {
 
     <!-- Sidebar -->
     <aside class="sidebar">
+        <h2 class="logo">USER PANEL</h2>
         <ul>
             <li><a href="user_dashboard.html">Dashboard</a></li>
-            <li><a href="#">My Deliveries</a></li>
-            <li><a href="#">My Payments</a></li>
-            <li><a href="#">Profile</a></li>
+             <li><a href="my_deliveries.html">My Deliveries</a></li>
+            <li><a href="my_payment.html">My Payments</a></li>
+            <li><a href="profile.html">Profile</a></li>
             <li><a href="#">Settings</a></li>
+             <li><a href="logout.html">Log Out</a></li>
         </ul>
     </aside>
 
@@ -172,17 +181,8 @@ button:hover {
                 <input type="password" placeholder="Confirm password">
 
                 <!-- Notifications -->
-                <div class="section-title" style="margin-top:30px;">Notifications</div>
-
-                <div class="toggle">
-                    <input type="checkbox" checked>
-                    <span>Email notifications</span>
-                </div>
-
-                <div class="toggle">
-                    <input type="checkbox">
-                    <span>SMS notifications</span>
-                </div>
+              
+              
 
                 <button type="submit">Save Settings</button>
 

@@ -29,17 +29,9 @@ h1 { margin-bottom:10px; color:#333; }
 .table-card th, .table-card td { text-align:left; padding:10px; border-bottom:1px solid #ddd; }
 .table-card th { background:#f2f2f2; }
 .table-card tr:hover { background:#f9f9f9; }
-a {
-    text-decoration: none;
-}
+a { text-decoration: none; }
 /* Reset all link colors */
-a,
-a:visited,
-a:hover,
-a:active {
-    color: #333;
-    text-decoration: none;
-}
+a, a:visited, a:hover, a:active { color: #333; text-decoration: none; }
 </style>
 </head>
 <body>
@@ -53,7 +45,8 @@ a:active {
             <li class="active"><a href="#">My Deliveries</a></li>
             <li><a href="my_payment.html">My Payments</a></li>
             <li><a href="profile.html">Profile</a></li>
-             <li><a href="#">Settings</a></li>
+             <li><a href="settings.html">Settings</a></li>
+              <li><a href="logout.html">Log Out</a></li>
         </ul>
     </aside>
 
@@ -68,30 +61,55 @@ a:active {
                     <tr>
                         <th>Date</th>
                         <th>Quantity (Liters)</th>
-                        <th>Status</th>
+                        <th>Collection Center</th>
+                        <th>Location</th>
+                        <th>Quality</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="deliveriesBody">
                     <tr>
-                        <td>2026-01-01</td>
-                        <td>15</td>
-                        <td>Delivered</td>
-                    </tr>
-                    <tr>
-                        <td>2026-01-03</td>
-                        <td>18</td>
-                        <td>Delivered</td>
-                    </tr>
-                    <tr>
-                        <td>2026-01-05</td>
-                        <td>16</td>
-                        <td>Delivered</td>
+                        <td colspan="5">Loading deliveries...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </main>
 </div>
+
+<!-- ================= API Connection ================= -->
+<script>
+  const userId = "6464a8dc-caf9-4c16-a1e2-39c3639daacf"; // Replace with actual user ID if needed
+  const apiUrl = `https://node-uuig.onrender.com/api/collections/user/${userId}`;
+
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+        const tbody = document.getElementById("deliveriesBody");
+        tbody.innerHTML = ""; // clear loading message
+
+        if (!data.collections || data.collections.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='5'>No deliveries found</td></tr>";
+            return;
+        }
+
+        data.collections.forEach(delivery => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${new Date(delivery.created_at).toLocaleDateString()}</td>
+                <td>${delivery.quantity}</td>
+                <td>${delivery.collection_center_name}</td>
+                <td>${delivery.collection_center_location}</td>
+                <td>${delivery.quality}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    })
+    .catch(error => {
+        console.error("API error:", error);
+        document.getElementById("deliveriesBody").innerHTML =
+          "<tr><td colspan='5'>Failed to load deliveries</td></tr>";
+    });
+</script>
 
 </body>
 </html>

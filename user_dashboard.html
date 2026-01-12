@@ -17,8 +17,9 @@
             <li class="active">Dashboard</li>
             <li><a href="my_deliveries.html">My Deliveries</a></li>
             <li><a href="my_payment.html">My Payments</a></li>
-             <li><a href="profile.html">Profile</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="settings.html">Settings</a></li>
+            <li><a href="logout.html">Log Out</a></li>
         </ul>
     </aside>
 
@@ -34,30 +35,56 @@
 
             <div class="card">
                 <h4>Today's Delivery</h4>
-                <h2>15 L</h2>
+                <h2 id="todaysDelivery">0 L</h2>
                 <span class="note">Delivered today</span>
             </div>
 
-       
-
             <div class="card revenue">
                 <h4>Payment Balance</h4>
-                <h2>95,000 RWF</h2>
+                <h2 id="paymentBalance">0 RWF</h2>
                 <span class="note">Pending payment</span>
             </div>
 
             <div class="card">
                 <h4>Last Payment</h4>
-                <h2>60,000 RWF</h2>
-                <span class="note">Paid on 15 Sept</span>
+                <h2 id="lastPayment">0 RWF</h2>
+                <span class="note" id="lastPaymentDate">Paid on N/A</span>
             </div>
-
-           
 
         </div>
 
     </main>
 </div>
+
+<!-- ================= API Connection ================= -->
+<script>
+    const userId = "6464a8dc-caf9-4c16-a1e2-39c3639daacf"; // Replace with actual user ID
+    const apiUrl = `https://node-uuig.onrender.com/api/user/${userId}/summary`;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Today's delivery
+            document.getElementById("todaysDelivery").textContent = `${data.todays_delivery_quantity} L`;
+
+            // Payment balance
+            document.getElementById("paymentBalance").textContent = `${Number(data.total_payments_amount).toLocaleString()} RWF`;
+
+            // Last payment
+            if (data.last_payment) {
+                document.getElementById("lastPayment").textContent = `${Number(data.last_payment.amount).toLocaleString()} RWF`;
+                const date = new Date(data.last_payment.date);
+                document.getElementById("lastPaymentDate").textContent = `Paid on ${date.toLocaleDateString()}`;
+            }
+        })
+        .catch(error => {
+            console.error("API error:", error);
+            document.getElementById("todaysDelivery").textContent = "0 L";
+            document.getElementById("paymentBalance").textContent = "0 RWF";
+            document.getElementById("lastPayment").textContent = "0 RWF";
+            document.getElementById("lastPaymentDate").textContent = "Paid on N/A";
+        });
+</script>
 
 </body>
 </html>
