@@ -95,31 +95,41 @@ const formMessage = document.getElementById("formMessage");
 const btnText = document.getElementById("btnText");
 const btnLoader = document.getElementById("btnLoader");
 
+// Fetch with timeout helper
+function fetchWithTimeout(url, options, timeout = 2000) { 
+    return Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Request timed out")), timeout)
+        )
+    ]);
+}
+
 loginForm.addEventListener("submit", async function(e) {
     e.preventDefault();
 
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
 
+    // Show loader
     btnText.style.display = "none";
     btnLoader.style.display = "inline";
 
     try {
-        // Call your login API
-        const res = await fetch("https://milk-api-l8fd.onrender.com/api/login", {
+        const res = await fetchWithTimeout("https://milk-api-l8fd.onrender.com/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password })
-        });
+        }, 10000); // 10 seconds timeout
 
         const data = await res.json();
 
         if(res.ok && data.user && data.user.id) {
-            // Save the userId in localStorage for the dashboard
+            // Save userId for dashboard
             localStorage.setItem("userId", data.user.id);
             localStorage.setItem("userName", data.user.fullname || username);
 
-            // Redirect to the user dashboard
+            // Redirect to user dashboard
             window.location.href = "user_dashboard.html";
         } else {
             formMessage.textContent = data.message || "Invalid username or password";
@@ -128,7 +138,7 @@ loginForm.addEventListener("submit", async function(e) {
         }
     } catch(err) {
         console.error(err);
-        formMessage.textContent = "Server error. Try again later.";
+        formMessage.textContent = err.message || "Server error. Try again later.";
         formMessage.className = "message error";
         formMessage.style.display = "block";
     } finally {
