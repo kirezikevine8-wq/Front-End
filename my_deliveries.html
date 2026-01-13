@@ -45,8 +45,8 @@ a, a:visited, a:hover, a:active { color: #333; text-decoration: none; }
             <li class="active"><a href="#">My Deliveries</a></li>
             <li><a href="my_payment.html">My Payments</a></li>
             <li><a href="profile.html">Profile</a></li>
-             <li><a href="settings.html">Settings</a></li>
-              <li><a href="logout.html">Log Out</a></li>
+            <li><a href="settings.html">Settings</a></li>
+            <li><a href="logout.html">Log Out</a></li>
         </ul>
     </aside>
 
@@ -78,13 +78,20 @@ a, a:visited, a:hover, a:active { color: #333; text-decoration: none; }
 
 <!-- ================= API Connection ================= -->
 <script>
-  const userId = "6464a8dc-caf9-4c16-a1e2-39c3639daacf"; // Replace with actual user ID if needed
+  // Get logged-in userId from localStorage
+  const userId = localStorage.getItem("userId");
+
+  // Redirect to login page if not logged in
+  if (!userId) {
+    window.location.href = "index.html";
+  }
+
   const apiUrl = `https://node-uuig.onrender.com/api/collections/user/${userId}`;
+  const tbody = document.getElementById("deliveriesBody");
 
   fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
-        const tbody = document.getElementById("deliveriesBody");
         tbody.innerHTML = ""; // clear loading message
 
         if (!data.collections || data.collections.length === 0) {
@@ -106,9 +113,10 @@ a, a:visited, a:hover, a:active { color: #333; text-decoration: none; }
     })
     .catch(error => {
         console.error("API error:", error);
-        document.getElementById("deliveriesBody").innerHTML =
-          "<tr><td colspan='5'>Failed to load deliveries</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='5'>Failed to load deliveries</td></tr>";
     });
+
+
 </script>
 
 </body>

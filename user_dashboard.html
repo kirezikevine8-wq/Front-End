@@ -58,17 +58,24 @@
 
 <!-- ================= API Connection ================= -->
 <script>
-    const userId = "6464a8dc-caf9-4c16-a1e2-39c3639daacf"; // Replace with actual user ID
+    // Get the userId dynamically from localStorage (set when user logs in)
+    const userId = localStorage.getItem("userId");
+
+    // If userId is missing, redirect to login page
+    if (!userId) {
+        window.location.href = "index.html";
+    }
+
     const apiUrl = `https://node-uuig.onrender.com/api/user/${userId}/summary`;
 
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
             // Today's delivery
-            document.getElementById("todaysDelivery").textContent = `${data.todays_delivery_quantity} L`;
+            document.getElementById("todaysDelivery").textContent = `${parseFloat(data.todays_delivery_quantity || 0).toFixed(2)} L`;
 
             // Payment balance
-            document.getElementById("paymentBalance").textContent = `${Number(data.total_payments_amount).toLocaleString()} RWF`;
+            document.getElementById("paymentBalance").textContent = `${Number(data.total_payments_amount || 0).toLocaleString()} RWF`;
 
             // Last payment
             if (data.last_payment) {
@@ -84,6 +91,8 @@
             document.getElementById("lastPayment").textContent = "0 RWF";
             document.getElementById("lastPaymentDate").textContent = "Paid on N/A";
         });
+
+
 </script>
 
 </body>
