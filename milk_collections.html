@@ -92,8 +92,8 @@
         <script>
         // Create custom dropdowns rendered in-frame (not native popups)
         (function(){
-            const centersApi = 'https://milk-api-l8fd.onrender.com/api/collection-centers';
-            const usersApi = 'https://milk-api-l8fd.onrender.com/api/user-names';
+            const centersApi = 'http://localhost:3001/api/collection-centers';
+            const usersApi = 'http://localhost:3001/api/user-names';
 
             const centerInput = document.getElementById('centerInput');
             const centersDropdown = document.getElementById('centersDropdown');
@@ -227,7 +227,7 @@
                 const submitBtn = document.getElementById('recordBtn');
                 try { submitBtn.classList.add('loading'); submitBtn.disabled = true; } catch(e){}
 
-                fetch('https://milk-api-l8fd.onrender.com/api/created-collection', {
+                fetch('http://localhost:3001/api/created-collection', {
                     method: 'POST',
                     headers: {
                         'Accept': '*/*',
@@ -259,7 +259,7 @@
             const container = document.getElementById('recentCollectionsList');
             if (!container) return;
             container.innerHTML = '<p style="color:#777;padding:12px">Loading...</p>';
-            fetch('https://milk-api-l8fd.onrender.com/api/created-collections/recent', { method: 'GET', headers: { 'Accept': '*/*' } })
+            fetch('http://localhost:3001/api/created-collections/recent', { method: 'GET', headers: { 'Accept': '*/*' } })
                 .then(r => { if (!r.ok) throw new Error('Failed to fetch recent collections'); return r.json(); })
                 .then(data => {
                     const items = data.collections || [];

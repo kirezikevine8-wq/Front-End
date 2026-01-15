@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dairy Management System</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f7f9fc;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Logo image */
+.logo {
+    display: flex;
+    flex-direction: column;   /* puts text under image */
+    align-items: center;
+}
+
+.logo img {
+    height: 45px;
+    cursor: pointer;
+}
+.logo-text {
+    font-size: 11px;
+    font-weight: 600;
+}
+.header {
+    align-items: center;
+}
+
+
+/* Login button */
+.login-btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Hero */
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.hero h1 {
+    color: #2563eb;
+    font-size: 34px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    color: #555;
+    max-width: 600px;
+    margin: auto;
+}
+
+.get-started {
+    margin-top: 25px;
+    background: #2563eb;
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="logo">
+        <img src="milk.jpg" alt="Milk Link Logo" onclick="goHome()">
+        <span class="logo-text">FRESH MILK</span>
+    </div>
+    <button class="login-btn" onclick="goLogin()">Login</button>
+</div>
+
+<!-- Hero Section -->
+<div class="hero">
+    <h1>MILK LINK</h1>
+    <p>
+        Track milk collections, manage payments, and run your dairy
+        operations efficiently with real-time insights and simple reporting.
+    </p>
+    <button class="get-started" onclick="goLogin()">Get Started</button>
+</div>
+
+<script>
+function goLogin() {
+    window.location.href = "index.html";
+}
+
+function goHome() {
+    window.location.href = "index.html";
+}
+
+// Auto-redirect if already logged in
+const token = localStorage.getItem("token");
+if (token) {
+    window.location.href = "user_dashboard.html";
+}
+</script>
+
+</body>
+</html>

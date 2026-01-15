@@ -115,7 +115,7 @@ let selectedUnitPrice = 0;
 // Load farmers from API
 async function loadFarmers() {
     try {
-        const res = await fetch('https://milk-api-l8fd.onrender.com/api/user-names');
+        const res = await fetch('http://localhost:3001/api/user-names');
         const data = await res.json();
         farmers = data.users || [];
     } catch(e) {
