@@ -176,7 +176,7 @@ loginForm.addEventListener("submit", async function(e) {
     btnLoader.style.display = "inline";
 
     try {
-        const res = await fetchWithTimeout("http://localhost:3001/api/login", {
+        const res = await fetchWithTimeout("https://milk-api-l8fd.onrender.com/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password })

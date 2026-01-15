@@ -47,13 +47,14 @@ tr:hover { background-color:#f9f9f9; }
     <!-- Sidebar -->
     <aside class="sidebar">
         <h2 class="logo">ADMIN PANEL</h2>
-        <ul class="menu">
-             <li><a href="admin_dashboard.html">Dashboard</a></li>
-             <li><a href="milk_collections.html">Collections</a></li>
-             <li><a href="payments.html">Payments</a></li>
-             <li><a href="collection_centers.html">Collection Centers</a></li>
-             <li class="active"><a href="#" class="menu-link" data-page="reports">Reports</a></li>
-        </ul>
+           <ul class="menu">
+               <li><a href="admin_dashboard.html">Dashboard</a></li>
+               <li><a href="milk_collections.html">Collections</a></li>
+               <li><a href="payments.html">Payments</a></li>
+               <li><a href="collection_centers.html">Collection Centers</a></li>
+               <li class="active"><a href="#" class="menu-link" data-page="reports">Reports</a></li>
+               <li><a href="#" onclick="logout(); return false;">Log Out</a></li>
+           </ul>
     </aside>
 
     <!-- Main Content -->
@@ -189,6 +190,12 @@ async function loadTabData(tab){
         populateTable('payments-table', mappedPayments, ["Farmer Name","Quantity","Amount","Payment Method"]);
         showSpinner('spinner-payments', false);
     }
+}
+
+// Logout utility for admin pages
+function logout(){
+    try { localStorage.removeItem('userId'); localStorage.clear(); } catch(e){}
+    window.location.href = 'index.html';
 }
 
 /* Tabs functionality */

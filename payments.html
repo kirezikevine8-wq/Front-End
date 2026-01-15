@@ -44,6 +44,7 @@ input[readonly] { background:#f1f1f1; }
             <li class="active"><a href="payments.html">Payments</a></li>
             <li><a href="collection_centers.html">Collection Centers</a></li>
             <li><a href="reports.html">Reports</a></li>
+            <li><a href="#" onclick="logout(); return false;">Log Out</a></li>
         </ul>
     </aside>
 
@@ -231,6 +232,11 @@ function showToast(msg, type){
     toast.className = 'toast ' + type;
     toast.style.display = 'block';
     setTimeout(()=> { toast.style.display = 'none'; }, 3000);
+}
+// Logout utility for admin pages
+function logout(){
+    try{ localStorage.removeItem('userId'); localStorage.clear(); }catch(e){}
+    window.location.href = 'index.html';
 }
 </script>
 

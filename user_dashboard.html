@@ -18,7 +18,7 @@
             <li><a href="my_deliveries.html">My Deliveries</a></li>
             <li><a href="my_payment.html">My Payments</a></li>
           
-            <li><a href="logout.html">Log Out</a></li>
+            <li><a href="#" onclick="logout(); return false;">Log Out</a></li>
         </ul>
     </aside>
 
@@ -91,7 +91,12 @@
             document.getElementById("lastPaymentDate").textContent = "Paid on N/A";
         });
 
-
+    // Logout function
+    function logout() {
+        localStorage.removeItem("userId");
+        localStorage.clear();
+        window.location.href = "index.html";
+    }
 </script>
 
 </body>

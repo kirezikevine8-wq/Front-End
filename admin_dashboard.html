@@ -19,6 +19,7 @@
             <li><a href="payments.html">Payments</a></li>
             <li><a href="collection_centers.html">Collection Centers</a></li>
             <li><a href="reports.html">Reports</a></li>
+            <li><a href="#" onclick="logout(); return false;">Log Out</a></li>
         </ul>
     </aside>
 
@@ -123,6 +124,14 @@ loadDashboardStats();
 // Refresh every 30 seconds
 setInterval(loadDashboardStats, 30000);
 </script>
+
+    <script>
+        // Logout utility for admin pages
+        function logout() {
+            try { localStorage.removeItem('userId'); localStorage.clear(); } catch(e){}
+            window.location.href = 'index.html';
+        }
+    </script>
 
 </body>
 </html>

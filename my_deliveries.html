@@ -45,7 +45,7 @@ a, a:visited, a:hover, a:active { color: #333; text-decoration: none; }
             <li class="active"><a href="#">My Deliveries</a></li>
             <li><a href="my_payment.html">My Payments</a></li>
            
-            <li><a href="logout.html">Log Out</a></li>
+            <li><a href="#" onclick="logout(); return false;">Log Out</a></li>
         </ul>
     </aside>
 
@@ -115,7 +115,12 @@ a, a:visited, a:hover, a:active { color: #333; text-decoration: none; }
         tbody.innerHTML = "<tr><td colspan='5'>Failed to load deliveries</td></tr>";
     });
 
-
+  // Logout function
+  function logout() {
+    localStorage.removeItem("userId");
+    localStorage.clear();
+    window.location.href = "index.html";
+  }
 </script>
 
 </body>
